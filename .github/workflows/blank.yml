@@ -1,0 +1,44 @@
+;~ Example 1 Iterating thru the different ways of representing the objects in the tree
+;~ a. Autoit WinList function
+;~ b. UIAutomation RawViewWalker
+;~ c. UIAutomation ControlViewWalker
+;~ d. UIAutomation ContentViewWalker
+;~ e. Finding elements based on conditions (based on property id, frequently search on name or classname)
+
+#include <EditConstants.au3>
+#include <GUIConstantsEx.au3>
+#include <WindowsConstants.au3>
+#include <MsgBoxConstants.au3>
+#include <WinAPI.au3>
+#include "CUIAutomation2.au3"
+#include "UIAWrappers.au3"
+
+#AutoIt3Wrapper_UseX64=Y  ;Should be used for stuff like tagpoint having right struct etc. when running on a 64 bits os
+
+;~ To prevent some FAQ questions
+consolewrite("*** Some important settings you can find in " & @scriptdir & "\UIA.CFG ***" & @CRLF)
+consolewrite("*** " & _UIA_getVersionInfoString() )
+consolewrite("*** If logging is turned on you can find it here :" & _UIA_getVar("logFileName") & @CRLF)
+
+samplewinlist()
+
+sampleTW(1)
+sampleTW(2)
+sampleTW(3)
+
+ConsoleWrite("**** Desktop windows ****" & @CRLF)
+findThemAll($UIA_oDesktop, $TreeScope_Children)
+
+ConsoleWrite(@CRLF & "**** All childs of the taskbar ****")
+$oTaskBar = _UIA_gettaskbar()
+findThemAll($oTaskBar, $treescope_subtree)
+
+ConsoleWrite(@CRLF & "**** Deal with browser windows ****" & @CRLF)
+Local $myBrowser
+;- Just get the first browser we can find
+$myBrowser=getBrowser()
+
+$tReturn=MsgBox($MB_SYSTEMMODAL + $MB_OKCANCEL , "Title", "Make sure you have 2 chrome browsers open otherwise press X button to abort.")
+if $tReturn<>$IDOK  Then
+    ConsoleWrite(@CRLF & "**** ABORTING chrome browser demo ****" & @CRLF)
+    exit
